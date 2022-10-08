@@ -38,5 +38,5 @@ async def invite(ctx):
   await ctx.send(file=file, embed=embed)
 
 
-keep_alive()
-bot.run(os.environ['TOKEN'])
+if __name__ == "__main__":
+  bot.run(os.environ['TOKEN'])
