@@ -3,7 +3,6 @@ from discord.ext import commands
 import os
 from utils.checks import check
 from utils.lunation import calculate
-from utils.keep_alive import keep_alive
 
 intents = discord.Intents.all()
 check = check()
