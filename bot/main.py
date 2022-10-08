@@ -1,16 +1,42 @@
-import os
+import discord
 from discord.ext import commands
+import os
+from utils.checks import check
+from utils.lunation import calculate
+from utils.keep_alive import keep_alive
 
-bot = commands.Bot(command_prefix="!")
-TOKEN = os.getenv("DISCORD_TOKEN")
+intents = discord.Intents.all()
+check = check()
+bot = commands.Bot(command_prefix='!',intents=intents)
+perms = discord.Permissions(permissions=274878032896)
 
 @bot.event
 async def on_ready():
-    print(f"Logged in as {bot.user.name}({bot.user.id})")
+  print('We have logged in as {0.user}'.format(bot))
+
 
 @bot.command()
-async def ping(ctx):
-    await ctx.send("pong")
+async def phase(ctx):
+  """ Sends the current moon phase """
+  await ctx.send(calculate())
 
-if __name__ == "__main__":
-    bot.run(TOKEN)
+
+@bot.command(hidden=True)
+@check.is_owner()
+async def down(ctx):
+  await ctx.send('Shutting Down...')
+  print('{0.user} is shutting down...'.format(bot))
+  await bot.close()
+
+  
+@bot.command()
+async def invite(ctx):
+  url = discord.utils.oauth_url(client_id=check.grab_id(), permissions=perms)
+  file = discord.File("moon.png", filename = "moon.png")
+  embed = discord.Embed(title="Invite Me!", url=url, description="Follow this link to invite me to your server.")
+  embed.set_thumbnail(url='attachment://moon.png')
+  await ctx.send(file=file, embed=embed)
+
+
+keep_alive()
+bot.run(os.environ['TOKEN'])
